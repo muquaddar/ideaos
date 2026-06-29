@@ -1,4 +1,3 @@
-export function healthCheck() {
-  const unused = 1
-  return { status: "ok", service: "ideaos" }
+export function healthCheck(): { status: "ok"; service: "ideaos" } {
+  return { status: "ok", service: "ideaos" };
 }
