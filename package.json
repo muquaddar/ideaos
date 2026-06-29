@@ -9,14 +9,27 @@
   "scripts": {
     "lint": "eslint .",
     "test": "vitest run",
-    "sk-lint": "python3 tools/sk-lint.py docs/specs"
+    "sk-lint": "python3 tools/sk-lint.py docs/specs",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/server.js",
+    "migrate:up": "node-pg-migrate up"
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
+    "@types/node": "^20.19.43",
+    "@types/pg": "^8.20.0",
     "@vitest/coverage-v8": "^4.1.9",
     "eslint": "^9.18.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0",
     "vitest": "^4.1.9"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/resources": "^2.8.0",
+    "@opentelemetry/sdk-trace-node": "^2.8.0",
+    "@opentelemetry/semantic-conventions": "^1.41.1",
+    "node-pg-migrate": "^8.0.4",
+    "pg": "^8.22.0"
   }
 }
