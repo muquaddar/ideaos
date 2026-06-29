@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaOS — Delete Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="app" data-screen="settings" data-crumbs="<b>Settings</b> / Delete account">
+<main class="content">
+  <div class="page-head"><span class="eyebrow">You control your mind</span><h1>Delete account &amp; purge data</h1>
+    <p>Idea content + embeddings are soft-deleted immediately and hard-purged within 30 days. You can cancel during the grace window. Only content-free audit metadata is retained — and we disclose that here.</p></div>
+  <div style="display:flex;gap:10px;margin-bottom:18px"><a class="btn ghost" href="export.html">Export first</a></div>
+  <div class="card pad-lg" style="border-color:color-mix(in srgb, var(--error) 35%, transparent)">
+    <div class="ai-note degraded" style="margin-bottom:16px"><span class="spark">⚠</span><div>Consider exporting your graph first — this removes 14 ideas and their entire history.</div></div>
+    <label class="field"><span>Type <b>DELETE MY IDEAS</b> to confirm</span>
+      <input class="input" id="phrase" placeholder="DELETE MY IDEAS"></label>
+    <button class="btn danger" id="del" disabled>Delete my ideas</button>
+    <p class="hint dim" style="margin-top:12px">30-day grace · recoverable until purge · audit metadata (no idea content) retained per policy.</p>
+  </div>
+</main>
+<script src="assets/graph-data.js"></script>
+<script src="assets/prototype.js"></script>
+<script>
+  var p=document.getElementById('phrase'), d=document.getElementById('del');
+  p.addEventListener('input', function(){ d.disabled = p.value.trim()!=='DELETE MY IDEAS'; });
+  d.addEventListener('click', function(){ PROTO.toast('Account scheduled for deletion (recoverable for 30 days)'); setTimeout(function(){ location.href='login.html'; },1200); });
+</script>
+</body>
+</html>

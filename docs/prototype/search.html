@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaOS — Search</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="app" data-screen="search" data-crumbs="<b>Search</b>">
+<main class="content">
+  <div class="page-head"><span class="eyebrow">Hybrid keyword + semantic</span><h1>Find a half-remembered thread</h1></div>
+  <input class="input" id="q" placeholder="Search your ideas…" style="font-size:16px;padding:14px" autofocus>
+  <div data-stateset style="margin-top:16px">
+    <div data-statepanel="results" class="list card" id="results"></div>
+    <div data-statepanel="empty" hidden class="card empty-state"><div class="ill">⌕</div><h2 style="margin:0 0 6px">No matches</h2><p class="muted">This thread may be genuinely new.</p><button class="btn primary" onclick="PROTO.openCapture()">Capture as new</button></div>
+  </div>
+</main>
+<script src="assets/graph-data.js"></script>
+<script src="assets/prototype.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    var R=document.getElementById('results'), Q=document.getElementById('q');
+    function render(list){
+      R.innerHTML=''; var empty=document.querySelector('[data-statepanel="empty"]'); var res=document.querySelector('[data-statepanel="results"]');
+      if(!list.length){ empty.hidden=false; res.hidden=true; return; } empty.hidden=true; res.hidden=false;
+      list.forEach(function(n){ R.insertAdjacentHTML('beforeend','<div class="list-row"><span class="status-dot" style="background:'+(IDEAOS.STATUS[n.status]||{}).color+'"></span><div class="grow"><h4><a href="idea.html?id='+n.id+'">'+n.title+'</a></h4><p>'+(n.purpose||'')+'</p></div><span class="dim mono" style="font-size:12px">'+(0.7+Math.random()*0.25).toFixed(2)+'</span></div>'); });
+    }
+    function run(){ var t=(Q.value||'').toLowerCase().trim(); var list = !t? IDEAOS.nodes.slice(0,6) : IDEAOS.nodes.filter(function(n){ return (n.title+' '+(n.purpose||'')+' '+(n.origin||'')).toLowerCase().indexOf(t)>=0; }); render(list); }
+    Q.addEventListener('input', run); run();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaOS — Graph Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="app" data-screen="home" data-crumbs="<b>Graph Home</b>">
+<main class="content" style="max-width:none">
+  <div class="page-head" style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+    <div style="flex:1;min-width:240px">
+      <span class="eyebrow">The graph is home</span>
+      <h1>Your living idea graph</h1>
+      <p>Nodes are ideas, colored by build status. Edges carry reasoning. Hover a node to highlight its relationships; click to open it.</p>
+    </div>
+    <div data-stateset>
+      <div class="state-toggle" role="tablist" aria-label="Screen state">
+        <button data-state="populated" class="on">Populated</button>
+        <button data-state="empty">Empty (new user)</button>
+        <button data-state="loading">Loading</button>
+        <button data-state="degraded">AI degraded</button>
+      </div>
+
+      <!-- POPULATED -->
+      <div data-statepanel="populated" style="margin-top:14px">
+        <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
+          <a class="chip" href="dashboard.html">▤ Decision dashboard</a>
+          <a class="chip" href="timeline.html">⟲ Time machine</a>
+          <button class="chip" id="treeToggle" type="button">⌶ View as tree (a11y)</button>
+          <div style="flex:1"></div>
+          <span class="dim" style="font-size:12px">14 ideas · 13 confirmed edges · 1 proposed</span>
+        </div>
+        <div class="graph-wrap">
+          <div id="graph"></div>
+          <div class="graph-controls">
+            <span class="chip">⊕ Zoom</span><span class="chip">⚲ Filter</span><span class="chip">⊟ Collapse</span>
+          </div>
+          <div class="graph-legend" id="legend"></div>
+        </div>
+        <div class="card" id="treeView" hidden style="margin-top:12px">
+          <div class="section-title">Tree view — keyboard &amp; screen-reader alternative (spec_05 §4)</div>
+          <ul id="treeList" style="margin:0;padding-left:18px;line-height:2"></ul>
+        </div>
+      </div>
+
+      <!-- EMPTY (cold-start hero) -->
+      <div data-statepanel="empty" hidden style="margin-top:14px">
+        <div class="card pad-lg empty-state">
+          <div class="ill">✦</div>
+          <h2 style="margin:0 0 6px">Your graph is empty — let's give it a memory</h2>
+          <p class="muted" style="max-width:48ch;margin:0 auto 18px">An empty graph can't show ancestry or duplicates yet. Import 10–30 ideas you already have, and IdeaOS will connect them and surface your first lineage in minutes.</p>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <a class="btn primary lg" href="capture.html">Import past ideas</a>
+            <button class="btn lg" onclick="PROTO.openCapture()">Capture one now</button>
+          </div>
+          <p class="dim" style="font-size:12px;margin-top:18px">This is the cold-start moment (risk R-003) — the hero, never a blank canvas.</p>
+        </div>
+      </div>
+
+      <!-- LOADING -->
+      <div data-statepanel="loading" hidden style="margin-top:14px">
+        <div class="graph-wrap" style="height:480px;display:grid;place-items:center">
+          <div style="text-align:center">
+            <div class="skeleton" style="width:120px;height:120px;border-radius:50%;margin:0 auto 16px"></div>
+            <div class="dim">Composing your graph…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEGRADED -->
+      <div data-statepanel="degraded" hidden style="margin-top:14px">
+        <div class="ai-note degraded" style="margin-bottom:12px">
+          <span class="spark">⚠</span>
+          <div><b>Reasoning service is temporarily unavailable.</b> Capture and your graph keep working — new ideas are saved and will be analyzed automatically when it's back. (Graceful degradation, NFR-003.)</div>
+        </div>
+        <div class="graph-wrap"><div id="graph2"></div></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="assets/graph-data.js"></script>
+<script src="assets/prototype.js"></script>
+<script>
+  // legend
+  (function(){
+    var L = document.getElementById('legend'); if(!L) return;
+    Object.keys(IDEAOS.STATUS).forEach(function(k){
+      if(['rejected'].indexOf(k)>=0) return;
+      var s = IDEAOS.STATUS[k];
+      L.insertAdjacentHTML('beforeend','<span class="legend-item"><span class="status-dot" style="background:'+s.color+'"></span>'+s.label+'</span>');
+    });
+  })();
+  // render degraded duplicate graph
+  document.addEventListener('DOMContentLoaded', function(){
+    if (document.getElementById('graph2')) PROTO.renderGraph('graph2');
+    // tree alternative
+    var tl = document.getElementById('treeList');
+    IDEAOS.nodes.forEach(function(n){
+      tl.insertAdjacentHTML('beforeend','<li><a href="idea.html?id='+n.id+'">'+n.title+'</a> <span class="dim" style="font-size:12px">· '+(IDEAOS.STATUS[n.status]||{}).label+'</span></li>');
+    });
+    document.getElementById('treeToggle').addEventListener('click', function(){
+      var t=document.getElementById('treeView'); t.hidden=!t.hidden;
+    });
+    // honor ?state=
+    var st = PROTO.qs('state');
+    if (st){ var b=document.querySelector('.state-toggle button[data-state="'+st+'"]'); if(b) b.click(); }
+  });
+</script>
+</body>
+</html>

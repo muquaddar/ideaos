@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaOS — Reality Check &amp; Decision</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="app" data-screen="home" data-crumbs="<a href='home.html'>Home</a> / <a id='cb' href='#'>Idea</a> / <b>Reality Check</b>">
+<main class="content">
+  <div class="page-head">
+    <span class="eyebrow">Evidence over advice</span>
+    <h1 id="ttl">Reality Check</h1>
+    <p>The evidence — with its source and confidence. IdeaOS does not choose for you; it makes the consequences visible so <b>you</b> can decide consciously.</p>
+  </div>
+
+  <div class="grid split">
+    <div class="card pad-lg" data-stateset>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="section-title" style="margin:0">Evidence</div>
+        <div class="state-toggle">
+          <button data-state="populated" class="on">Ready</button>
+          <button data-state="loading">Loading</button>
+          <button data-state="degraded">AI degraded</button>
+        </div>
+      </div>
+
+      <div data-statepanel="populated">
+        <ul class="evidence" id="ev"></ul>
+        <button class="btn ghost" id="more" style="margin-top:10px">Show 2 more evidence items</button>
+        <p class="no-advice" style="margin-top:14px">Note: there is no “recommended” option. Every item above cites a source and a confidence — that is all the system will assert.</p>
+      </div>
+      <div data-statepanel="loading" hidden>
+        <div class="skeleton sk-line" style="width:80%"></div><div class="skeleton sk-line" style="width:65%"></div><div class="skeleton sk-line" style="width:72%"></div>
+        <p class="dim" style="margin-top:10px">Assembling evidence from your graph…</p>
+      </div>
+      <div data-statepanel="degraded" hidden>
+        <div class="ai-note degraded"><span class="spark">⚠</span><div>Live reasoning is unavailable, so only <b>structural</b> evidence (twin %, scores, edges from your graph) is shown — clearly labeled. Narrative synthesis will fill in when the service returns.</div></div>
+      </div>
+    </div>
+
+    <aside class="card pad-lg">
+      <div class="section-title">Your decision</div>
+      <p class="muted" style="font-size:12.5px;margin-top:-4px">Seven outcomes, equal weight. The idea is never deleted — even Reject and Archive keep the node.</p>
+      <div class="decisions" id="decisions"></div>
+      <label class="field" style="margin-top:16px"><span>Rationale (optional, yours)</span>
+        <textarea class="input" placeholder="Why you're deciding this…"></textarea></label>
+      <button class="btn primary block lg" id="record" disabled>Record decision</button>
+      <p class="dim" id="hint" style="font-size:12.5px;margin-top:10px">Pick an outcome to continue.</p>
+    </aside>
+  </div>
+</main>
+<script src="assets/graph-data.js"></script>
+<script src="assets/prototype.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    var id = PROTO.qs('id')||'n9'; var n = PROTO.node(id);
+    if(n){ document.getElementById('ttl').textContent='Reality Check — “'+n.title+'”'; document.getElementById('cb').textContent=n.title; document.getElementById('cb').href='idea.html?id='+id; }
+
+    // evidence
+    var items = (IDEAOS.realityCheck[id]||[]).slice();
+    var EV = document.getElementById('ev');
+    function evRow(it){
+      return '<li><div class="ev-ic">'+it.icon+'</div><div class="ev-body"><div>'+it.text+'</div>'+
+        '<div class="ev-meta"><a class="provenance" href="'+it.source.href+'">'+it.source.label+'</a>'+
+        '<span class="confidence" data-c="'+it.confidence+'"><span class="bar"><i></i></span>'+it.confidence+' confidence</span></div></div></li>';
+    }
+    var shown = items.slice(0,3), rest = items.slice(3);
+    shown.forEach(function(it){ EV.insertAdjacentHTML('beforeend', evRow(it)); });
+    var more = document.getElementById('more');
+    if(rest.length){ more.textContent='Show '+rest.length+' more evidence items';
+      more.addEventListener('click', function(){ rest.forEach(function(it){ EV.insertAdjacentHTML('beforeend', evRow(it)); }); more.remove(); });
+    } else more.remove();
+
+    // neutral decision controls
+    var D = document.getElementById('decisions'), chosen=null;
+    IDEAOS.decisionOutcomes.forEach(function(o){
+      var b=document.createElement('button'); b.className='decision'; b.type='button';
+      b.innerHTML='<span class="d-ic">'+o.icon+'</span>'+o.label; b.setAttribute('data-o',o.id);
+      b.addEventListener('click', function(){
+        chosen=o; [].forEach.call(D.children,function(c){c.classList.toggle('selected',c===b);});
+        var rec=document.getElementById('record'); rec.disabled=false;
+        document.getElementById('hint').textContent = (o.id==='incubate')?'Incubate → you’ll set an activation condition next.' : (o.id==='merge')?'Merge → opens the merge flow.' : 'Outcome: '+o.label+'. The node is preserved either way.';
+      });
+      D.appendChild(b);
+    });
+    document.getElementById('record').addEventListener('click', function(){
+      if(!chosen) return;
+      if(chosen.id==='incubate'){ PROTO.toast('Incubated'); setTimeout(function(){ location.href='activation.html?id='+id; },600); return; }
+      if(chosen.id==='merge'){ location.href='merge.html?id='+id; return; }
+      PROTO.toast('Decision recorded: '+chosen.label);
+      setTimeout(function(){ location.href='dashboard.html'; }, 700);
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaOS — Ancestry &amp; Twins</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="app" data-screen="home" data-crumbs="<a href='home.html'>Home</a> / <a id='cbidea' href='idea.html?id=n9'>Idea</a> / <b>Ancestry &amp; Twins</b>">
+<main class="content">
+  <div class="page-head">
+    <span class="eyebrow">Idea ancestry engine</span>
+    <h1 id="ttl">Ancestry analysis</h1>
+    <p>How this idea relates to everything already in your graph — with confidence and the exact neighbors that drove each judgement.</p>
+  </div>
+
+  <!-- Twin warning -->
+  <div class="twin" id="twin" style="margin-bottom:18px">
+    <div class="pct">88%</div>
+    <div style="flex:1">
+      <b>Likely duplicate of an existing idea.</b>
+      <div class="muted" style="font-size:13.5px">“Custom cache for IdeaOS” is substantially the same as <a href="idea.html?id=n8">Caching layer v2</a> (complete). You may be about to rebuild something you already have.</div>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn" href="merge.html?id=n9">⧉ Merge into Caching layer v2</a>
+        <button class="btn ghost" id="notdup">Not a duplicate</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid split">
+    <div class="card">
+      <div class="section-title">Classification</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <span class="badge" style="background:var(--twin-soft);border-color:var(--edge-twin);color:var(--edge-twin)">◆ Duplicate / twin</span>
+        <span class="confidence" data-c="high"><span class="bar"><i></i></span>high confidence</span>
+      </div>
+      <p class="muted" style="font-size:13.5px">It is also a <b>child</b> of your mission trunk (it would <i>support</i> <a href="idea.html?id=n7">IdeaOS</a>), and a <b>sibling</b> of other optimizations. The strongest signal, though, is the twin.</p>
+
+      <div class="section-title" style="margin-top:18px">Supporting neighbors (provenance)</div>
+      <ul class="evidence">
+        <li><div class="ev-ic">◆</div><div class="ev-body">
+          <div><b>Caching layer v2</b> — 88% similar embedding</div>
+          <div class="ev-meta"><a class="provenance" href="idea.html?id=n8">n8 · cosine 0.88</a><span class="confidence" data-c="high"><span class="bar"><i></i></span>high</span></div>
+        </div></li>
+        <li><div class="ev-ic">🌱</div><div class="ev-body">
+          <div><b>IdeaOS</b> — would be supported by this idea</div>
+          <div class="ev-meta"><a class="provenance" href="idea.html?id=n7">n7 · supports</a><span class="confidence" data-c="medium"><span class="bar"><i></i></span>medium</span></div>
+        </div></li>
+      </ul>
+    </div>
+
+    <aside class="card">
+      <div class="section-title">Next</div>
+      <p class="muted" style="font-size:13.5px">IdeaOS proposed relationships from this analysis. They are <b>suggestions</b> — nothing is added to your graph until you confirm it.</p>
+      <a class="btn primary block" href="relationships.html?id=n9">Review proposed relationships →</a>
+      <a class="btn block" style="margin-top:10px" href="lineage.html?id=n9">See its lineage</a>
+      <a class="btn block" style="margin-top:10px" href="idea.html?id=n9">Open the idea</a>
+      <hr class="sep">
+      <p class="dim" style="font-size:12.5px">Stories US-004, US-006, US-007 · NFR-012 (grounding).</p>
+    </aside>
+  </div>
+</main>
+<script src="assets/graph-data.js"></script>
+<script src="assets/prototype.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    var id = PROTO.qs('id')||'n9'; var n = PROTO.node(id);
+    if(n) document.getElementById('ttl').textContent='Ancestry of “'+n.title+'”';
+    document.getElementById('cbidea').href='idea.html?id='+id;
+    document.getElementById('notdup').addEventListener('click', function(){
+      document.getElementById('twin').style.display='none'; PROTO.toast('Recorded — kept as distinct ideas');
+    });
+  });
+</script>
+</body>
+</html>

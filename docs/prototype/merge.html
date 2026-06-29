@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaOS — Merge</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="app" data-screen="home" data-crumbs="<a href='home.html'>Home</a> / <b>Merge</b>">
+<main class="content">
+  <div class="page-head">
+    <span class="eyebrow">Nothing is forgotten</span>
+    <h1>Merge twin ideas</h1>
+    <p>Edges re-point to the surviving idea (no orphans). You choose the surviving value per conflicting field. The source isn't deleted — it's kept as a tombstone pointing to the target.</p>
+  </div>
+  <div class="card pad-lg">
+    <div class="grid cols-2" style="align-items:start">
+      <div><div class="section-title">Source (merged away)</div><div class="card" style="box-shadow:none"><b>Custom cache for IdeaOS</b><div class="dim" style="font-size:12.5px">captured · 88% similar</div></div></div>
+      <div><div class="section-title">Target (survives)</div><div class="card" style="box-shadow:none;border-color:var(--primary)"><b>Caching layer v2</b><div class="dim" style="font-size:12.5px">complete</div></div></div>
+    </div>
+    <hr class="sep">
+    <div class="section-title">Resolve conflicting fields</div>
+    <div class="kv"><div class="k">Purpose</div><div class="v" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+      <button class="chip" type="button">A reusable caching layer</button>
+      <button class="chip" type="button" style="background:var(--primary-soft);color:var(--primary);border-color:var(--primary)">Speed up graph reads in IdeaOS ✓</button></div></div>
+    <div class="kv"><div class="k">Origin</div><div class="v" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+      <button class="chip" type="button" style="background:var(--primary-soft);color:var(--primary);border-color:var(--primary)">Repeated reads were slow ✓</button>
+      <button class="chip" type="button">Graph reads felt slow in IdeaOS</button></div></div>
+    <div style="display:flex;gap:10px;margin-top:18px"><button class="btn primary" id="do">Merge</button><a class="btn ghost" href="idea.html?id=n9">Cancel</a></div>
+    <p class="dim" style="font-size:12.5px;margin-top:12px">Story US-016 · 0 orphaned edges guaranteed.</p>
+  </div>
+</main>
+<script src="assets/graph-data.js"></script>
+<script src="assets/prototype.js"></script>
+<script>document.getElementById('do').addEventListener('click', function(){ PROTO.toast('Merged — edges re-pointed, source kept as tombstone'); setTimeout(function(){ location.href='idea.html?id=n8'; },800); });</script>
+</body>
+</html>

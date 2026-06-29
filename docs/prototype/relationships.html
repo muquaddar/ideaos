@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaOS — Relationship Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="app" data-screen="home" data-crumbs="<a href='home.html'>Home</a> / <a id='cb' href='#'>Idea</a> / <b>Relationships</b>">
+<main class="content">
+  <div class="page-head">
+    <span class="eyebrow">Human-in-the-loop</span>
+    <h1>Review proposed relationships</h1>
+    <p>IdeaOS <b>proposes</b> edges with a reason and confidence. Nothing joins your graph until you confirm it — injected or ambiguous text can change what the model says, never what your graph commits (ADR-004).</p>
+  </div>
+  <div class="card pad-lg">
+    <ul class="evidence" id="props"></ul>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn primary" id="confirm">Confirm selected</button>
+      <a class="btn ghost" href="idea.html?id=n9">Skip for now</a>
+    </div>
+    <p class="dim" style="font-size:12.5px;margin-top:12px">Story US-006 · only confirmed edges are traversed for ancestry &amp; scores.</p>
+  </div>
+</main>
+<script src="assets/graph-data.js"></script>
+<script src="assets/prototype.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    var id = PROTO.qs('id')||'n9'; document.getElementById('cb').href='idea.html?id='+id;
+    var n=PROTO.node(id); if(n) document.getElementById('cb').textContent=n.title;
+    var P=document.getElementById('props');
+    var proposed = IDEAOS.edges.filter(function(e){ return !e.confirmed && (e.s===id||e.t===id); });
+    if(!proposed.length){ P.innerHTML='<p class="muted">No pending proposals.</p>'; }
+    proposed.forEach(function(e){
+      var other=PROTO.node(e.s===id?e.t:e.s); var et=IDEAOS.EDGE_TYPES[e.type]||{};
+      P.insertAdjacentHTML('beforeend',
+        '<li><div class="ev-ic"><input type="checkbox" checked aria-label="confirm edge"></div>'+
+        '<div class="ev-body"><div><b>'+(et.label||e.type)+'</b> → <a href="idea.html?id='+other.id+'">'+other.title+'</a></div>'+
+        '<div class="muted" style="font-size:13px">'+e.reason+'</div>'+
+        '<div class="ev-meta"><span class="confidence" data-c="'+(e.confidence>=.8?'high':e.confidence>=.6?'medium':'low')+'"><span class="bar"><i></i></span>'+Math.round(e.confidence*100)+'%</span>'+
+        '<button class="chip" type="button" onclick="this.closest(\'li\').remove()">Reject</button></div></div></li>');
+    });
+    document.getElementById('confirm').addEventListener('click', function(){ PROTO.toast('Edges confirmed and added to your graph'); setTimeout(function(){ location.href='idea.html?id='+id; }, 700); });
+  });
+</script>
+</body>
+</html>

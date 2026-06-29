@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaOS — Prototype Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<main style="max-width:1040px;margin:0 auto;padding:40px 24px 80px">
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px">
+    <span class="logo" style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--status-incubate));display:grid;place-items:center;color:#fff;font-weight:800;font-size:18px">◉</span>
+    <div>
+      <h1 style="margin:0;font-size:26px;letter-spacing:-.02em">IdeaOS — Clickable Prototype</h1>
+      <p class="muted" style="margin:2px 0 0">L1 fidelity (spec_05 §8). All links active · seeded demo graph · light/dark theme.</p>
+    </div>
+    <div style="flex:1"></div>
+    <button class="theme-toggle" style="width:auto" id="themeBtn" type="button"><span>Theme</span>&nbsp;<span data-theme-label></span></button>
+  </div>
+
+  <div class="ai-note" style="margin:18px 0 26px">
+    <span class="spark">✦</span>
+    <div>This is a <b>design-validation artifact</b>, not production code — no backend, no live LLM. It exists to test the two journeys with real users before the first heavy UI build sprint (gates graph.S2). The non-directive promise (NFR-010) is visible in the UI: every AI claim shows a <span class="provenance" style="vertical-align:middle">n8 · 88%</span> badge and a confidence bar, and the decision controls are neutral and equal-weight.</div>
+  </div>
+
+  <!-- Journeys -->
+  <h2 class="section-title">Guided journeys (run these in the usability test)</h2>
+  <div class="grid cols-2" style="margin-bottom:30px">
+    <div class="card">
+      <span class="eyebrow">Journey J-1</span>
+      <h3 style="margin:6px 0 4px">First-time onboarding &amp; cold-start</h3>
+      <p class="muted" style="font-size:13.5px">Sign up → empty graph → guided import → first interview → first relationship → first value.</p>
+      <ol class="journey-steps">
+        <li><a href="signup.html">Sign up &amp; verify</a></li>
+        <li><a href="home.html?state=empty">See the empty graph (import hero)</a></li>
+        <li><a href="capture.html">Import / capture seed ideas</a></li>
+        <li><a href="interview.html?id=n9">AI interviews a seed idea</a></li>
+        <li><a href="relationships.html?id=n9">Confirm the first relationship</a></li>
+        <li><a href="ancestry.html?id=n9">See the first lineage &amp; twin</a></li>
+      </ol>
+    </div>
+    <div class="card">
+      <span class="eyebrow">Journey J-2</span>
+      <h3 style="margin:6px 0 4px">New idea → conscious decision (the core loop)</h3>
+      <p class="muted" style="font-size:13.5px">Capture → interview → ancestry/twin → derivative scores → Reality Check → decide.</p>
+      <ol class="journey-steps">
+        <li><a href="home.html">Open the living graph</a></li>
+        <li><a href="capture.html">Capture a new idea (⌘K)</a></li>
+        <li><a href="interview.html?id=n9">Answer the AI interview</a></li>
+        <li><a href="ancestry.html?id=n9">Ancestry classified, twin checked</a></li>
+        <li><a href="idea.html?id=n9">Review derivative scores</a></li>
+        <li><a href="decide.html?id=n9">Reality Check → record decision</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Full screen map -->
+  <h2 class="section-title">All 19 screens</h2>
+  <div class="grid cols-3">
+    <a class="card" href="home.html"><b>SCR-001 · Graph Home</b><div class="dim" style="font-size:12.5px">/ — the living graph</div></a>
+    <a class="card" href="capture.html"><b>SCR-002 · Capture</b><div class="dim" style="font-size:12.5px">/capture — voice/text, 0 fields</div></a>
+    <a class="card" href="interview.html?id=n9"><b>SCR-003 · AI Interview</b><div class="dim" style="font-size:12.5px">Socratic, skippable</div></a>
+    <a class="card" href="ancestry.html?id=n9"><b>SCR-004 · Ancestry &amp; Twins</b><div class="dim" style="font-size:12.5px">classification + confidence</div></a>
+    <a class="card" href="lineage.html?id=n7"><b>SCR-005 · Lineage</b><div class="dim" style="font-size:12.5px">where did I come from?</div></a>
+    <a class="card" href="relationships.html?id=n9"><b>SCR-006 · Relationship Review</b><div class="dim" style="font-size:12.5px">accept/reject edges</div></a>
+    <a class="card" href="idea.html?id=n9"><b>SCR-007 · Node Detail + Derivative</b><div class="dim" style="font-size:12.5px">all fields + scores</div></a>
+    <a class="card" href="search.html"><b>SCR-008 · Search</b><div class="dim" style="font-size:12.5px">keyword + semantic</div></a>
+    <a class="card" href="decide.html?id=n9"><b>SCR-009 · Reality Check &amp; Decision</b><div class="dim" style="font-size:12.5px">evidence + 7 outcomes</div></a>
+    <a class="card" href="merge.html?id=n9"><b>SCR-010 · Merge</b><div class="dim" style="font-size:12.5px">resolve twin</div></a>
+    <a class="card" href="activation.html?id=n3"><b>SCR-011 · Activation Condition</b><div class="dim" style="font-size:12.5px">evidence trigger</div></a>
+    <a class="card" href="alerts.html"><b>SCR-012 · Activation Alerts</b><div class="dim" style="font-size:12.5px">evidence-based</div></a>
+    <a class="card" href="timeline.html"><b>SCR-013 · Time Machine</b><div class="dim" style="font-size:12.5px">snapshot playback</div></a>
+    <a class="card" href="archaeology.html?id=n7"><b>SCR-014 · Idea Archaeology</b><div class="dim" style="font-size:12.5px">full history</div></a>
+    <a class="card" href="dashboard.html"><b>SCR-015 · Decision Dashboard</b><div class="dim" style="font-size:12.5px">what/why/waiting</div></a>
+    <a class="card" href="signup.html"><b>SCR-016 · Signup</b><div class="dim" style="font-size:12.5px">/signup</div></a>
+    <a class="card" href="login.html"><b>SCR-017 · Login</b><div class="dim" style="font-size:12.5px">/login</div></a>
+    <a class="card" href="export.html"><b>SCR-018 · Export</b><div class="dim" style="font-size:12.5px">portability</div></a>
+    <a class="card" href="delete.html"><b>SCR-019 · Delete Account</b><div class="dim" style="font-size:12.5px">erasure</div></a>
+  </div>
+
+  <p class="dim" style="margin-top:30px;font-size:12.5px">Built on the Opus foundation (design system, graph, core-loop screens). Supporting screens marked <span class="chip">Sonnet fan-out</span> reuse these same components.</p>
+</main>
+<script src="assets/graph-data.js"></script>
+<script src="assets/prototype.js"></script>
+<script>document.getElementById('themeBtn').addEventListener('click', function(){ var h=document.documentElement; var n=h.getAttribute('data-theme')==='dark'?'light':'dark'; h.setAttribute('data-theme',n); localStorage.setItem('ideaos-theme',n); });</script>
+</body>
+</html>

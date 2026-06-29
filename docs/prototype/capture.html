@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaOS — Capture</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="app" data-screen="capture" data-crumbs="<a href='home.html'>Home</a> / <b>Capture</b>">
+<main class="content">
+  <div class="page-head">
+    <span class="eyebrow">Friction at decision, not at capture</span>
+    <h1>Capture an idea</h1>
+    <p>One gesture. Zero required fields. Speak it or type it — structure comes later, automatically.</p>
+  </div>
+
+  <div class="grid split">
+    <div class="card pad-lg">
+      <div data-stateset>
+        <div class="state-toggle" style="margin-bottom:16px">
+          <button data-state="empty" class="on">Empty</button>
+          <button data-state="success">Saved</button>
+          <button data-state="degraded">Offline</button>
+        </div>
+
+        <div data-statepanel="empty">
+          <label class="field"><span>What's on your mind?</span>
+            <textarea class="input" id="ta" style="min-height:130px" placeholder="e.g. A custom cache to speed up graph reads in IdeaOS"></textarea>
+          </label>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="btn" id="mic" type="button" aria-pressed="false">🎤 Voice</button>
+            <span class="dim" id="micHint" style="font-size:12.5px" hidden>Listening… (prototype fills sample text)</span>
+            <div style="flex:1"></div>
+            <button class="btn primary" id="save">Save idea</button>
+          </div>
+          <p class="hint">⌘/Ctrl+Enter to save · 1–5000 characters</p>
+        </div>
+
+        <div data-statepanel="success" hidden>
+          <div class="ai-note" style="margin-bottom:14px"><span class="spark">✦</span><div><b>Idea saved</b> as a draft node and queued for the AI interview + ancestry analysis. Your graph already has it.</div></div>
+          <a class="btn primary" href="interview.html?id=n9">Continue to interview →</a>
+          <a class="btn ghost" href="home.html">Back to graph</a>
+        </div>
+
+        <div data-statepanel="degraded" hidden>
+          <div class="ai-note degraded" style="margin-bottom:14px"><span class="spark">⚠</span><div><b>You're offline.</b> Your idea is stored locally with a pending indicator and will sync — in order — the moment you reconnect. Nothing is lost.</div></div>
+          <div class="chip">⏳ 1 idea queued locally</div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="card">
+      <div class="section-title">Import (cold-start)</div>
+      <p class="muted" style="font-size:13.5px">New graph? Paste a list and IdeaOS splits it into idea nodes — so your graph is non-trivial on day one.</p>
+      <textarea class="input" style="min-height:120px" placeholder="One idea per line…
+StoryLoom
+Character System
+Human DNA
+Caching layer v2"></textarea>
+      <button class="btn block" id="import" style="margin-top:10px">Import as ideas</button>
+      <hr class="sep">
+      <p class="dim" style="font-size:12.5px">Stories: US-001 (voice), US-002 (text), US-026 (offline).</p>
+    </aside>
+  </div>
+</main>
+
+<script src="assets/graph-data.js"></script>
+<script src="assets/prototype.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    var save=document.getElementById('save'), ta=document.getElementById('ta'), mic=document.getElementById('mic');
+    function go(){ PROTO.toast('Idea saved — analyzing…'); setTimeout(function(){ location.href='interview.html?id=n9'; }, 650); }
+    save.addEventListener('click', go);
+    ta.addEventListener('keydown', function(e){ if((e.metaKey||e.ctrlKey)&&e.key==='Enter') go(); });
+    mic.addEventListener('click', function(){ var on=mic.getAttribute('aria-pressed')==='true'; mic.setAttribute('aria-pressed',String(!on)); document.getElementById('micHint').hidden=on; if(!on) ta.value='A custom cache to speed up graph reads in IdeaOS'; });
+    document.getElementById('import').addEventListener('click', function(){ PROTO.toast('Imported 4 ideas'); setTimeout(function(){ location.href='home.html'; }, 700); });
+  });
+</script>
+</body>
+</html>

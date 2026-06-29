@@ -1,0 +1,56 @@
+# IdeaOS — SK project index (spec_00). Machine-readable orientation + ID registry.
+# The one place that answers "what tier / which specs / what's the next ID / is anything locked".
+# Validated by sk-lint (R0). Update on every amendment.
+project:
+  slug: "ideaos"
+  name: "IdeaOS — AI Cognitive Operating System for Builders"
+  tier: 3                       # complexity tier; built solo (capacity profile in spec_06 §6, MP-06)
+  facilitator: hybrid           # AI drafts, founder reviews/approves
+  protocol_version: "v2.7.0"
+  current_gate: "SK.G4"
+  gate_status: approved          # SK.G1..G4 self-approved 2026-06-29 (see lock block below); EK begins
+  lock:
+    intentional: true
+    locked_by: "Muquaddar"
+    locked_at: "2026-06-29"
+    method: "solo self-approval — founder holds product+tech+devops+security+ux+architect authority (Tier 3 capacity profile, spec_01 Tier Variations). Real-world-blocked open items NOT waived: logged as deferred-but-tracked against the sprint that can actually satisfy them (see open_items)."
+    multi_voice_waived: true
+
+specs:                          # version MUST match each file's frontmatter (sk-lint R0)
+  spec_01_project:      { version: 0.1.0, gate: SK.G1, status: approved }
+  spec_02_users:        { version: 0.1.0, gate: SK.G2, status: approved }
+  spec_03_requirements: { version: 0.1.0, gate: SK.G2, status: approved }
+  spec_04_architecture: { version: 0.1.0, gate: SK.G3, status: approved }
+  spec_05_design:       { version: 0.1.0, gate: SK.G3, status: approved }
+  spec_06_build:        { version: 0.1.0, gate: SK.G4, status: approved }
+  spec_07_launch:       { version: 0.1.0, gate: SK.G4, status: approved }
+
+id_registry:                    # next ID to assign per family
+  next_FR:  FR-040
+  next_NFR: NFR-018
+  next_US:  US-027
+  # Sprint objectives use a TRACK-BANDED scheme (intentional; gaps between bands are WARN, not FAIL):
+  #   infra T-5xx, foundation T-0xx, capture T-1xx, reasoning T-2xx, decision T-3xx, graph T-4xx
+  next_T:   T-508               # next per band: foundation T-008, capture T-108, reasoning T-212, decision T-311, graph T-413, infra T-508
+  next_LC:  LC-011
+  next_ADR: ADR-007
+
+counts:                         # informational; sk-lint validates against actual
+  fr: 39                        # 23 Must / 14 Should / 2 Could / 0 Won't
+  nfr: 17
+  stories: 26                   # 17 Must / 7 Should / 2 Could
+  sprint_objectives: 54
+  launch_criteria: 10
+  critical_nfrs: [NFR-008, NFR-010, NFR-011]
+
+diagrams:
+  manifest: docs/diagrams/manifest.psv
+  gallery: docs/diagrams/approval-gallery.html
+
+open_items:        # none of these blocked SK.G1-G4 self-approval (2026-06-29) — logged as deferred-but-tracked,
+                   # re-checked at the sprint that can actually satisfy them. Not silently dropped.
+  - "DEFERRED → post-alpha (~graph.S2, project.yaml alpha_milestone 2026-09-14): recruit 3-5 design partners (ST-002), re-validate spec_02 personas/JTBD against real users."
+  - "DEFERRED → T-208 (reasoning.S2 golden-eval gate): validate ancestry/twin eval thresholds (SC-002) on a labeled set; CI regression-eval blocks merge if F1/recall < 0.80."
+  - "DEFERRED → T-504 (infra.S1, this sprint): confirm Anthropic + Voyage AI account-level cost assumptions before the NFR-017 budget alarm ships."
+  - "DEFERRED → ongoing, non-blocking (MP-21): render per-gate diagram galleries (SK.G1-G4); docs/diagrams/ not yet created, sk-lint R10 treats this as INFO not FAIL."
+  - "DEFERRED → T-507 (infra.S2): run rollback drill on staging, set spec_07 rollback.tested_on_staging=true — tracked as a pre-GA launch gate (LC-009), not waived."

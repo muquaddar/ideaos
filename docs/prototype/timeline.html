@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaOS — Time Machine</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="app" data-screen="timeline" data-crumbs="<b>Time Machine</b>">
+<main class="content" style="max-width:none">
+  <div class="page-head"><span class="eyebrow">Watch your thinking unfold</span><h1>Time Machine</h1>
+    <p>Daily snapshots let you replay how your graph grew. Scrub the timeline to see the graph exactly as it was on any date (read-only).</p></div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <button class="btn" id="play">▶ Play</button>
+      <input type="range" id="scrub" min="0" max="6" value="6" style="flex:1;min-width:200px">
+      <span class="mono" id="date">2026-06-29</span>
+    </div>
+  </div>
+  <div class="graph-wrap"><div id="graph"></div><div class="graph-legend"><span class="dim" id="count">14 ideas</span></div></div>
+  <p class="dim" style="font-size:12.5px;margin-top:12px">Story US-019 · new users with &lt; 2 snapshots see an explanatory empty state, not a broken player.</p>
+</main>
+<script src="assets/graph-data.js"></script>
+<script src="assets/prototype.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    var dates=['2026-01-10','2026-02-14','2026-03-20','2026-04-22','2026-05-18','2026-06-10','2026-06-29'];
+    var counts=[2,4,6,8,10,12,14];
+    var scrub=document.getElementById('scrub');
+    function upd(){ var i=+scrub.value; document.getElementById('date').textContent=dates[i]; document.getElementById('count').textContent=counts[i]+' ideas';
+      // dim nodes "not yet created" by depth as a simple proxy
+      var svg=document.querySelector('#graph svg'); if(!svg) return; var max=counts[i];
+      [].forEach.call(svg.querySelectorAll('.g-node'), function(g,idx){ g.style.opacity = idx < max ? 1 : 0.08; });
+    }
+    scrub.addEventListener('input', upd); setTimeout(upd, 50);
+    document.getElementById('play').addEventListener('click', function(){ var v=0; scrub.value=0; upd(); var t=setInterval(function(){ v++; if(v>6){clearInterval(t);return;} scrub.value=v; upd(); }, 500); });
+  });
+</script>
+</body>
+</html>

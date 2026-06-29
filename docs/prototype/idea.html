@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaOS — Idea</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="app" data-screen="home" data-crumbs="<a href='home.html'>Home</a> / <b id='cb'>Idea</b>">
+<main class="content">
+  <div class="page-head" style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap">
+    <div style="flex:1;min-width:260px">
+      <span class="eyebrow">Idea node</span>
+      <h1 id="ttl">Idea</h1>
+      <div id="statusrow" style="margin-top:6px"></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn" id="lineageBtn" href="#">Lineage</a>
+      <a class="btn" id="archBtn" href="#">Archaeology</a>
+      <a class="btn primary" id="decideBtn" href="#">Open Reality Check →</a>
+    </div>
+  </div>
+
+  <div class="grid split">
+    <div class="card pad-lg">
+      <div class="section-title">Everything recorded about this idea</div>
+      <div class="sheet-grid" id="fields"></div>
+    </div>
+
+    <aside>
+      <div class="card" id="derivative">
+        <div class="section-title">Derivative analysis</div>
+        <p class="muted" style="font-size:12.5px;margin-top:-4px">Tap a score to see the factors behind it.</p>
+        <div id="scores"></div>
+        <div id="noScores" class="dim" style="font-size:13px" hidden>Scores compute once this idea has neighbors in the graph.</div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="section-title">Twin</div>
+        <div id="twinBox" class="muted" style="font-size:13.5px">No twin detected.</div>
+      </div>
+    </aside>
+  </div>
+</main>
+<script src="assets/graph-data.js"></script>
+<script src="assets/prototype.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    var id = PROTO.qs('id')||'n9'; var n = PROTO.node(id);
+    if(!n){ document.getElementById('ttl').textContent='Idea not found'; return; }
+    document.getElementById('ttl').textContent = n.title;
+    document.getElementById('cb').textContent = n.title;
+    document.getElementById('statusrow').innerHTML = PROTO.statusBadge(n.status) + ' <span class="chip">'+n.type+'</span>';
+    document.getElementById('lineageBtn').href='lineage.html?id='+id;
+    document.getElementById('archBtn').href='archaeology.html?id='+id;
+    document.getElementById('decideBtn').href='decide.html?id='+id;
+
+    // fields — null reads "not recorded", never fabricated
+    var F = document.getElementById('fields');
+    function row(k,v){ return '<div class="kv"><div class="k">'+k+'</div><div class="v'+(v?'':' empty')+'">'+(v||'not recorded')+'</div></div>'; }
+    // derive parent + supported projects from edges
+    var parent=null, supports=[];
+    IDEAOS.edges.forEach(function(e){
+      if(e.t===id && (e.type==='parent_of')) { var p=PROTO.node(e.s); if(p) parent=p; }
+      if(e.s===id && e.type==='supports'){ var t=PROTO.node(e.t); if(t) supports.push('<a href="idea.html?id='+t.id+'">'+t.title+'</a>'); }
+    });
+    var sc = IDEAOS.scores[id];
+    F.innerHTML =
+      row('Parent', parent? '<a href="idea.html?id='+parent.id+'">'+parent.title+'</a>' : null) +
+      row('Origin', n.origin) +
+      row('Trigger', n.trigger) +
+      row('Purpose', n.purpose) +
+      row('Idea type', n.type) +
+      row('Build status', (IDEAOS.STATUS[n.status]||{}).label) +
+      row('Supported projects', supports.length? supports.join(', ') : null) +
+      row('Estimated cost', sc? '~3 weeks' : null) +
+      row('Opportunity cost', sc? 'delays Evidence Contract ~21d' : null) +
+      row('Activation condition', IDEAOS.activation[id]? IDEAOS.activation[id].definition : null);
+
+    // scores
+    var S = document.getElementById('scores');
+    if(!sc){ document.getElementById('noScores').hidden=false; }
+    else {
+      var labels = { depth:'Depth', leverage:'Leverage', dependency:'Dependency', cost:'Cost', opportunity_cost:'Opportunity cost', derivative_value:'Derivative value', derivative_risk:'Derivative risk' };
+      Object.keys(labels).forEach(function(k){
+        var item = sc[k];
+        S.insertAdjacentHTML('beforeend',
+          '<div class="score-row" data-k="'+k+'"><div class="s-label">'+labels[k]+'</div>'+
+          '<div class="s-track"><i style="width:'+item.value+'%"></i></div>'+
+          '<div class="s-val">'+item.value+'</div></div>'+
+          '<div class="score-factors" data-f="'+k+'" hidden>'+item.factors+'</div>');
+      });
+      S.addEventListener('click', function(e){ var r=e.target.closest('.score-row'); if(!r) return;
+        var f=S.querySelector('.score-factors[data-f="'+r.getAttribute('data-k')+'"]'); if(f) f.hidden=!f.hidden; });
+    }
+
+    // twin
+    var twin=null;
+    IDEAOS.edges.forEach(function(e){ if(e.type==='duplicates' && (e.s===id||e.t===id)){ var other=PROTO.node(e.s===id?e.t:e.s); twin={node:other,c:e.confidence}; } });
+    if(twin && twin.node){
+      document.getElementById('twinBox').innerHTML = '<div class="twin" style="padding:12px"><div class="pct" style="font-size:20px">'+Math.round(twin.c*100)+'%</div><div><a href="idea.html?id='+twin.node.id+'">'+twin.node.title+'</a><div class="dim" style="font-size:12px">candidate duplicate</div><a class="btn" style="margin-top:8px" href="merge.html?id='+id+'">⧉ Merge</a></div></div>';
+    }
+  });
+</script>
+</body>
+</html>

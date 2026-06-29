@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaOS — Idea Archaeology</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="app" data-screen="home" data-crumbs="<a href='home.html'>Home</a> / <a id='cb' href='#'>Idea</a> / <b>Archaeology</b>">
+<main class="content">
+  <div class="page-head"><span class="eyebrow">A complete history of thought</span><h1 id="ttl">Idea archaeology</h1>
+    <p>Everything connected to this idea — each category labeled even when empty, so nothing is silently omitted.</p></div>
+  <div class="grid cols-3" id="cats"></div>
+  <p class="dim" style="font-size:12.5px;margin-top:14px">Story US-020.</p>
+</main>
+<script src="assets/graph-data.js"></script>
+<script src="assets/prototype.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    var id=PROTO.qs('id')||'n7'; var n=PROTO.node(id); document.getElementById('cb').href='idea.html?id='+id;
+    if(n){ document.getElementById('cb').textContent=n.title; document.getElementById('ttl').textContent='Archaeology of “'+n.title+'”'; }
+    var rel={ancestors:[],descendants:[],siblings:[],twins:[],influences:[],conflicts:[]};
+    IDEAOS.edges.forEach(function(e){
+      if(e.t===id && (e.type==='parent_of')) rel.ancestors.push(e.s);
+      if(e.s===id && (e.type==='parent_of')) rel.descendants.push(e.t);
+      if((e.type==='duplicates') && (e.s===id||e.t===id)) rel.twins.push(e.s===id?e.t:e.s);
+      if((e.type==='inspired_by') && (e.s===id||e.t===id)) rel.influences.push(e.s===id?e.t:e.s);
+      if((e.type==='blocks') && (e.s===id||e.t===id)) rel.conflicts.push(e.s===id?e.t:e.s);
+      if((e.type==='supports'||e.type==='depends_on') && e.t===id) rel.influences.push(e.s);
+    });
+    // siblings: share a parent
+    var parents=IDEAOS.edges.filter(function(e){return e.t===id&&e.type==='parent_of';}).map(function(e){return e.s;});
+    parents.forEach(function(p){ IDEAOS.edges.forEach(function(e){ if(e.s===p&&e.type==='parent_of'&&e.t!==id) rel.siblings.push(e.t); }); });
+    var labels={ancestors:'Ancestors',descendants:'Descendants',siblings:'Siblings',twins:'Twins',influences:'Influences',conflicts:'Conflicts'};
+    var C=document.getElementById('cats');
+    Object.keys(labels).forEach(function(k){
+      var ids=[].concat.apply([],[rel[k]]).filter(function(v,i,a){return a.indexOf(v)===i;});
+      var body = ids.length? ids.map(function(x){var m=PROTO.node(x); return m?'<div class="list-row"><div class="grow"><a href="idea.html?id='+m.id+'">'+m.title+'</a></div></div>':'';}).join('') : '<p class="dim" style="font-size:12.5px">none recorded</p>';
+      C.insertAdjacentHTML('beforeend','<div class="card"><div class="section-title">'+labels[k]+'</div>'+body+'</div>');
+    });
+  });
+</script>
+</body>
+</html>

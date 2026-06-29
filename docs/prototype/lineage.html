@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaOS — Lineage</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="app" data-screen="home" data-crumbs="<a href='home.html'>Home</a> / <a id='cb' href='#'>Idea</a> / <b>Lineage</b>">
+<main class="content">
+  <div class="page-head">
+    <span class="eyebrow">Idea ancestry engine</span>
+    <h1 id="ttl">Where did this come from?</h1>
+    <p>The reasoning chain from the root mission to this idea. Every hop is a <b>real</b> edge in your graph — the AI narrates, but never invents a link.</p>
+  </div>
+  <div class="card pad-lg">
+    <ol class="journey-steps" id="chain" style="font-size:15px"></ol>
+    <div class="ai-note degraded" id="rootnote" hidden style="margin-top:14px"><span class="spark">◎</span><div>This is a <b>root idea</b> — it has no ancestors. That's its origin, not an error.</div></div>
+  </div>
+</main>
+<script src="assets/graph-data.js"></script>
+<script src="assets/prototype.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    var id=PROTO.qs('id')||'n7'; var n=PROTO.node(id);
+    document.getElementById('cb').href='idea.html?id='+id;
+    if(n){ document.getElementById('cb').textContent=n.title; document.getElementById('ttl').textContent='Where did “'+n.title+'” come from?'; }
+    // walk parent_of/inspired_by edges back to root
+    function parentOf(x){ var e=IDEAOS.edges.find(function(ed){ return ed.t===x && ed.confirmed && (ed.type==='parent_of'||ed.type==='inspired_by'); }); return e? {node:PROTO.node(e.s), via:IDEAOS.EDGE_TYPES[e.type].label, reason:e.reason} : null; }
+    var chain=[], cur=id, guard=0;
+    while(cur && guard++<20){ var n2=PROTO.node(cur); var p=parentOf(cur); chain.unshift({node:n2, link:p?{via:p.via,reason:p.reason}:null}); cur=p?p.node.id:null; }
+    var C=document.getElementById('chain');
+    if(chain.length<=1){ document.getElementById('rootnote').hidden=false; }
+    chain.forEach(function(step){
+      C.insertAdjacentHTML('beforeend','<li><div><a href="idea.html?id='+step.node.id+'"><b>'+step.node.title+'</b></a>'+
+        (step.link? ' <span class="dim" style="font-size:12.5px">— '+step.link.via+': '+step.link.reason+'</span>':' <span class="chip">root</span>')+'</div></li>');
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaOS — Decision Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="app" data-screen="dashboard" data-crumbs="<b>Decision Dashboard</b>">
+<main class="content">
+  <div class="page-head">
+    <span class="eyebrow">Decision dashboard</span>
+    <h1>What am I building — and why?</h1>
+    <p>Standing answers, all derived from real graph state. Every item links to the ideas behind it.</p>
+  </div>
+
+  <div class="grid cols-2">
+    <div class="card">
+      <div class="section-title">▶ Building now</div>
+      <div class="list" id="building"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">◐ Waiting (incubating)</div>
+      <div class="list" id="waiting"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">◔ Should activate next</div>
+      <div class="list" id="activate"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">✦ A new idea that's actually an old idea</div>
+      <div class="list" id="twins"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <div class="section-title">⚖ Costing the most attention</div>
+    <p class="muted" style="font-size:13.5px"><a href="idea.html?id=n9">Custom cache for IdeaOS</a> carries the highest opportunity cost in your graph (78/100) for low derivative value (24/100) — it would delay your mission trunk. <span class="dim">Evidence, not advice — <a href="decide.html?id=n9">decide it</a>.</span></p>
+  </div>
+</main>
+<script src="assets/graph-data.js"></script>
+<script src="assets/prototype.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    function rowFor(n, note){ return '<div class="list-row"><span class="status-dot" style="background:'+(IDEAOS.STATUS[n.status]||{}).color+'"></span><div class="grow"><h4><a href="idea.html?id='+n.id+'">'+n.title+'</a></h4><p>'+note+'</p></div><a class="btn ghost" href="idea.html?id='+n.id+'">Open</a></div>'; }
+    function fill(elId, statuses, note){ var c=document.getElementById(elId); IDEAOS.nodes.filter(function(n){return statuses.indexOf(n.status)>=0;}).slice(0,4).forEach(function(n){ c.insertAdjacentHTML('beforeend', rowFor(n, note(n))); }); }
+    fill('building', ['building'], function(n){ return n.purpose; });
+    fill('waiting', ['incubating'], function(n){ var a=IDEAOS.activation[n.id]; return a? a.definition : 'incubating until evidence'; });
+    document.getElementById('activate').innerHTML = rowFor(PROTO.node('n3'), 'Activation condition 2 of 3 met (StoryLoom, IdeaOS)');
+    document.getElementById('twins').innerHTML = rowFor(PROTO.node('n9'), '88% twin of Caching layer v2 — likely a rebuild');
+  });
+</script>
+</body>
+</html>

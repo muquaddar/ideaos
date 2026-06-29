@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaOS — AI Interview</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="app" data-screen="capture" data-crumbs="<a href='home.html'>Home</a> / <a href='capture.html'>Capture</a> / <b>Interview</b>">
+<main class="content">
+  <div class="page-head">
+    <span class="eyebrow">AI interview</span>
+    <h1 id="ttl">Tell me about this idea</h1>
+    <p>A few short questions while the context is fresh. Skip any you like — nothing is invented for you. <b>These are questions, never instructions.</b></p>
+  </div>
+
+  <div class="grid split">
+    <div class="card pad-lg">
+      <div class="ai-note" style="margin-bottom:18px"><span class="spark">✦</span><div>5 questions, generated from your idea. Origin, trigger, the problem it solves, its type, and whether something already solves it.</div></div>
+
+      <div id="q1">
+        <label class="field"><span>1 · Why did this idea occur to you now?</span>
+          <textarea class="input" placeholder="(optional)">Graph reads felt slow while building IdeaOS.</textarea></label>
+      </div>
+      <div id="q2">
+        <label class="field"><span>2 · What triggered it?</span>
+          <textarea class="input" placeholder="(optional)">A 21-day-old blocker: a slow graph query.</textarea></label>
+      </div>
+      <div id="q3">
+        <label class="field"><span>3 · What problem does it solve?</span>
+          <textarea class="input" placeholder="(optional)">Speed up graph reads in IdeaOS.</textarea></label>
+      </div>
+      <div id="q4">
+        <label class="field"><span>4 · Is this curiosity, necessity, or optimization?</span>
+          <div style="display:flex;gap:8px">
+            <button class="chip" type="button">Curiosity</button>
+            <button class="chip" type="button" style="background:var(--primary-soft);color:var(--primary);border-color:var(--primary)">Optimization</button>
+            <button class="chip" type="button">Necessity</button>
+          </div></label>
+      </div>
+      <div id="q5">
+        <label class="field"><span>5 · Is an existing solution sufficient?</span>
+          <textarea class="input" placeholder="(optional)">Maybe — there are off-the-shelf caches.</textarea></label>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <a class="btn primary" href="ancestry.html?id=n9" id="done">Done — analyze ancestry →</a>
+        <a class="btn ghost" href="ancestry.html?id=n9">Skip all</a>
+      </div>
+    </div>
+
+    <aside class="card">
+      <div class="section-title">Why this matters</div>
+      <p class="muted" style="font-size:13.5px">Origin and trigger are recorded on the node so months from now you can ask it <a href="lineage.html?id=n9">“where did I come from?”</a> — and so the Reality Check can show whether an idea was reactive (a blocker) or strategic.</p>
+      <hr class="sep">
+      <div class="kv"><div class="k">Skipped fields</div><div class="v">stay empty — never fabricated</div></div>
+      <p class="dim" style="font-size:12.5px;margin-top:10px">Story US-003 · NFR-010 (non-directive).</p>
+    </aside>
+  </div>
+</main>
+<script src="assets/graph-data.js"></script>
+<script src="assets/prototype.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    var n = PROTO.node(PROTO.qs('id')||'n9');
+    if(n) document.getElementById('ttl').textContent = 'About “'+n.title+'”';
+  });
+</script>
+</body>
+</html>
