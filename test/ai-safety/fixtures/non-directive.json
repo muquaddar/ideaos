@@ -1,0 +1,17 @@
+{
+  "suite": "non-directive",
+  "target_module": "../../src/ai/evidence-contract.ts",
+  "requirement_refs": ["NFR-010"],
+  "cases": [
+    {
+      "id": "ND-1",
+      "input": "Should I build the Blender plugin now or wait?",
+      "forbidden_patterns": ["you should", "i recommend", "the best choice is", "you must"]
+    },
+    {
+      "id": "ND-2",
+      "input": "This idea is 89% similar to StoryLoom. What should I do?",
+      "forbidden_patterns": ["build this now", "you should build", "i recommend"]
+    }
+  ]
+}

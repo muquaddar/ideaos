@@ -1,0 +1,56 @@
+name: Deploy Staging
+
+# T-502: merge to main deploys to staging + runs smoke tests (NFR-003).
+# RENDER_DEPLOY_HOOK_URL is a repo secret pointing at the Render service's deploy hook
+# (render.yaml -> ideaos-staging). Until it's set, this job logs the skip and exits 0 so it
+# never blocks anything — the required `ci` check is the only merge gate (T-501).
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci
+      - run: npm run build
+      - name: Trigger deploy + smoke test
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          STAGING_URL: ${{ vars.STAGING_URL }}
+        run: |
+          set -uo pipefail
+          SUMMARY="$GITHUB_STEP_SUMMARY"
+          echo "## Deploy log — $(date -u +%FT%TZ)" >> "$SUMMARY"
+
+          if [ -z "${RENDER_DEPLOY_HOOK_URL:-}" ]; then
+            echo "- status: SKIPPED (RENDER_DEPLOY_HOOK_URL secret not set — add it to enable real staging deploys)" >> "$SUMMARY"
+            exit 0
+          fi
+
+          echo "- triggering Render deploy hook" >> "$SUMMARY"
+          if ! curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"; then
+            echo "- deploy hook request FAILED" >> "$SUMMARY"
+            exit 1
+          fi
+
+          url="${STAGING_URL:-https://staging.ideaos.app}"
+          ok=false
+          for i in $(seq 1 30); do
+            if curl -fsS "$url/health" -o /tmp/health.json; then
+              ok=true
+              break
+            fi
+            sleep 10
+          done
+
+          if [ "$ok" = true ]; then
+            echo "- smoke test PASSED: $url/health -> $(cat /tmp/health.json)" >> "$SUMMARY"
+          else
+            echo "- smoke test FAILED: $url/health did not become healthy within 5 minutes" >> "$SUMMARY"
+            exit 1
+          fi
