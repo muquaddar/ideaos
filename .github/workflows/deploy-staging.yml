@@ -1,9 +1,10 @@
 name: Deploy Staging
 
 # T-502: merge to main deploys to staging + runs smoke tests (NFR-003).
-# RENDER_DEPLOY_HOOK_URL is a repo secret pointing at the Render service's deploy hook
-# (render.yaml -> ideaos-staging). Until it's set, this job logs the skip and exits 0 so it
-# never blocks anything — the required `ci` check is the only merge gate (T-501).
+# Interim, no Render/Fly.io account yet: runs the built server on localhost inside the
+# runner and smoke-tests against it, so the smoke-test logic is real and CI-verified now.
+# Swap back to a real deploy (render.yaml -> ideaos-staging) by triggering
+# RENDER_DEPLOY_HOOK_URL and smoke-testing STAGING_URL once an account exists.
 on:
   push:
     branches: [main]
@@ -18,39 +19,30 @@ jobs:
           node-version: "20"
       - run: npm ci
       - run: npm run build
-      - name: Trigger deploy + smoke test
-        env:
-          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-          STAGING_URL: ${{ vars.STAGING_URL }}
+      - name: Run server locally + smoke test
         run: |
           set -uo pipefail
           SUMMARY="$GITHUB_STEP_SUMMARY"
           echo "## Deploy log — $(date -u +%FT%TZ)" >> "$SUMMARY"
+          echo "- mode: LOCAL (no hosting account yet — see render.yaml for the real target)" >> "$SUMMARY"
 
-          if [ -z "${RENDER_DEPLOY_HOOK_URL:-}" ]; then
-            echo "- status: SKIPPED (RENDER_DEPLOY_HOOK_URL secret not set — add it to enable real staging deploys)" >> "$SUMMARY"
-            exit 0
-          fi
+          PORT=4000 NODE_ENV=production node dist/server.js &
+          SERVER_PID=$!
 
-          echo "- triggering Render deploy hook" >> "$SUMMARY"
-          if ! curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"; then
-            echo "- deploy hook request FAILED" >> "$SUMMARY"
-            exit 1
-          fi
-
-          url="${STAGING_URL:-https://staging.ideaos.app}"
           ok=false
-          for i in $(seq 1 30); do
-            if curl -fsS "$url/health" -o /tmp/health.json; then
+          for i in $(seq 1 15); do
+            if curl -fsS http://localhost:4000/health -o /tmp/health.json; then
               ok=true
               break
             fi
-            sleep 10
+            sleep 1
           done
 
+          kill "$SERVER_PID" 2>/dev/null || true
+
           if [ "$ok" = true ]; then
-            echo "- smoke test PASSED: $url/health -> $(cat /tmp/health.json)" >> "$SUMMARY"
+            echo "- smoke test PASSED: http://localhost:4000/health -> $(cat /tmp/health.json)" >> "$SUMMARY"
           else
-            echo "- smoke test FAILED: $url/health did not become healthy within 5 minutes" >> "$SUMMARY"
+            echo "- smoke test FAILED: server never became healthy" >> "$SUMMARY"
             exit 1
           fi
